@@ -1,0 +1,71 @@
+<%- include('./parstial/header') -%>
+
+<div class="container">
+    <h2>Edit User</h2>
+    <form id="editUserForm" action="/admin/update" method="POST">
+        <div class="form-group">
+            <label for="username">Username</label>
+            <input type="text" id="username" value="<%= user.username %>" name="username" required>
+            <small id="usernameError" style="color: red;"></small>
+        </div>
+        <div class="form-group">
+            <label for="name">Name</label>
+            <input type="text" id="name" value="<%= user.name %>" name="name" required>
+            <small id="nameError" style="color: red;"></small>
+        </div>
+        <div class="form-group">
+            <label for="email">Email</label>
+            <input type="email" id="email" value="<%= user.email %>" name="email" required>
+            <small id="emailError" style="color: red;"></small>
+        </div>
+        <div class="form-group">
+            <input type="text" id="id" value="<%= user._id %>" name="id" hidden>
+        </div>
+        <button type="submit">Update User</button>
+        <button><a href="/admin/home">Back</a></button>
+    </form>
+</div>
+
+<%- include('./parstial/footer') -%>
+
+<script>
+document.getElementById("editUserForm").addEventListener("submit", function(event) {
+    event.preventDefault();
+    
+    const email = document.getElementById("email").value.trim();
+    const username = document.getElementById("username").value.trim();
+    const name = document.getElementById("name").value.trim();
+
+    const emailError = document.getElementById('emailError');
+    const usernameError = document.getElementById('usernameError');
+    const nameError = document.getElementById('nameError');
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const usernameRegex = /^[A-Za-z][A-Za-z\s]*$/;
+    const nameRegex = /^[A-Za-z\s]+$/;
+
+    let isValid = true;
+
+
+    emailError.innerHTML = "";
+    usernameError.innerHTML = "";
+    nameError.innerHTML = "";
+
+    if (!emailRegex.test(email)) {
+      emailError.innerHTML = "Enter a valid email";
+      isValid = false;
+    }
+    if (!usernameRegex.test(username)) {
+      usernameError.innerHTML = "Enter a valid Username";
+      isValid = false;
+    }
+    if (!nameRegex.test(name)) {
+      nameError.innerHTML = "Enter a valid Name";
+      isValid = false;
+    }
+
+    if (isValid) {
+      this.submit();
+    }
+});
+</script>

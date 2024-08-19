@@ -1,0 +1,129 @@
+<%- include ('./parstial/header')  -%>
+
+<section style="min-height: 100vh; background: linear-gradient(45deg, #000000, #ffffff);">
+  <div class="container py-5 h-100">
+    <div class="row d-flex justify-content-center align-items-center h-100">
+      <div class="col-12 col-md-8 col-lg-6 col-xl-5">
+        <div class="card" style="border-radius: 1rem; background-color: rgba(0, 0, 0, 0.7); color: white;">
+          <div class="card-body p-5 text-center">
+            <div class="mb-md-5 mt-md-4 pb-5">
+              <h2 class="fw-bold mb-2 text-uppercase">Register</h2>
+              <p class="text-white-50 mb-5">Please enter your details to register!</p>
+
+              <% if (locals.message) { %>
+                <p class="<%= messageType === 'success' ? 'message-success' : 'message-error' %>"><%= locals.message %></p>
+              <% } %>
+
+              <form action="" method="post" class="pt-3" id="register">
+                <div class="form-outline form-white mb-4">
+                  <input type="text" id="username" class="form-control form-control-lg" placeholder="Enter Username" name="username" style="background-color: rgba(255, 255, 255, 0.2); border: none; color: white;" />
+                  <small id="usernameError" style="color: red;"></small>
+                </div>
+
+                <div class="form-outline form-white mb-4">
+                  <input type="text" id="name" class="form-control form-control-lg" placeholder="Enter Name" name="name" style="background-color: rgba(255, 255, 255, 0.2); border: none; color: white;" />
+                  <small id="nameError" style="color: red;"></small>
+                </div>
+
+                <div class="form-outline form-white mb-4">
+                  <input type="email" id="email" class="form-control form-control-lg" placeholder="Enter Email" name="email" style="background-color: rgba(255, 255, 255, 0.2); border: none; color: white;" />
+                  <small id="emailError" style="color: red;"></small>
+                </div>
+
+                <div class="form-outline form-white mb-4">
+                  <input type="password" id="password" class="form-control form-control-lg" placeholder="Enter Password" name="password" style="background-color: rgba(255, 255, 255, 0.2); border: none; color: white;" />
+                  <small id="passwordError" style="color: red;"></small>
+                </div>
+
+                <button type="submit" class="btn btn-outline-light btn-lg px-5" style="border-color: #fff;">Register</button>
+              </form>
+            </div>
+
+            <div id="successMessage" style="display: none; color: lightgreen;">
+              Registration successful! Redirecting to login page...
+            </div>
+
+            <div>
+              <p class="mb-0">Already have an account? <a href="/user/login" class="text-white-50 fw-bold">Login</a></p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  document.getElementById("register").addEventListener("submit", async (event) => {
+    event.preventDefault();
+    
+    const email = document.getElementById("email").value.trim();
+    const password = document.getElementById('password').value.trim();
+    const username = document.getElementById("username").value.trim();
+    const name = document.getElementById("name").value.trim();
+
+    const emailError = document.getElementById('emailError');
+    const passwordError = document.getElementById('passwordError');
+    const usernameError = document.getElementById('usernameError');
+    const nameError = document.getElementById('nameError');
+    const successMessage = document.getElementById('successMessage');
+
+    const passwordRegex = /^[^\W_][\w\W]{5,}$/;
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const usernameRegex = /^[A-Za-z][A-Za-z\s]*$/;
+    const nameRegex = /^[A-Za-z\s]+$/;
+
+    let isValid = true;
+
+    // Clear previous error messages
+    emailError.innerHTML = "";
+    passwordError.innerHTML = "";
+    usernameError.innerHTML = "";
+    nameError.innerHTML = "";
+    successMessage.style.display = "none";
+
+    if (!emailRegex.test(email)) {
+      emailError.innerHTML = "Enter a valid email";
+      isValid = false;
+    }
+    if (!passwordRegex.test(password)) {
+      passwordError.innerHTML = "Password must be minimum 6 characters";
+      isValid = false;
+    }
+    if (!usernameRegex.test(username)) {
+      usernameError.innerHTML = "Enter a valid Username";
+      isValid = false;
+    }
+    if (!nameRegex.test(name)) {
+      nameError.innerHTML = "Enter a valid Name";
+      isValid = false;
+    }
+
+    if (isValid) {
+      const response = await fetch("/user/register", {
+        method: "POST",
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          email: email,
+          password: password,
+          username: username,
+          name: name
+        })
+      });
+
+      if (response.ok) {
+        successMessage.style.display = "block";
+        setTimeout(() => {
+          window.location.href = "/user/login";
+        }, 2000);
+      } else {
+        const data = await response.json();
+        emailError.innerHTML = data.message;
+      }
+    }
+  });
+</script>
+
+<%- include ('./parstial/footer')  -%>

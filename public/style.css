@@ -1,0 +1,59 @@
+body {
+    font-family: "Inter", sans-serif;
+    background-image: url(./assets/dark\ sun.jpg);
+    background-size: cover;
+  }
+  
+  
+  .center-div {
+    padding-top: 10%;
+  }
+  
+  #invalid {
+    margin-top: 3%;
+    padding: 0;
+  }
+  
+  .form-group {
+    margin-top: 5%;
+  }
+  
+  #home,
+  #main-login {
+    background-color: rgb(255, 255, 255, 0.3);
+    border: 3px solid white;
+    border-radius: 10px;
+    color: black;
+  }
+  
+  #home a {
+    color: white;
+  }
+  
+  .btn.btn-success {
+    margin-top: 10%;
+    padding: 0.4em 2em;
+  }
+  
+  form {
+    padding: 0 2em;
+  }
+  
+  #login.title > span {
+    font-size: 0.8em;
+  }
+  
+  
+  /* Background */
+  .gradient-custom {
+    background: #6a11cb;
+    background: -webkit-linear-gradient(to right, rgba(106, 17, 203, 1), rgba(37, 117, 252, 1));
+    background: linear-gradient(to right, rgba(106, 17, 203, 1), rgba(37, 117, 252, 1))
+  }
+  /* .popup{
+    width: 400px;
+    background:white;
+    border-radius:6px;
+    position: absolute;
+  }
+     */

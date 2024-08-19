@@ -1,0 +1,89 @@
+<%- include ('./parstial/header')  -%>
+
+<section class="vh-100 gradient-custom">
+  <div class="container py-5 h-100">
+    <div class="row d-flex justify-content-center align-items-center h-100">
+      <div class="col-12 col-md-8 col-lg-6 col-xl-5">
+        <div class="card bg-dark text-white" style="border-radius: 1rem;">
+          <div class="card-body p-5 text-center">
+            <div class="mb-md-5 mt-md-4 pb-5">
+              <h2 class="fw-bold mb-2 text-uppercase">Login</h2>
+              <p class="text-white-50 mb-5">Please enter your login and password!</p>
+
+              <% if (typeof message !== 'undefined') { %>
+                <p class="text-white-50 mb-5 <%= messageType === 'success' ? 'success-message' : 'error-message' %>"><%= message %></p>
+              <% } %>
+
+              <form action="" class="pt-3" id="login">
+                <div class="form-outline form-white mb-4">
+                  <input type="email" id="email" class="form-control form-control-lg" placeholder="Enter Email" name="email" />
+                </div>
+
+                <div class="form-outline form-white mb-4">
+                  <input type="password" id="password" class="form-control form-control-lg" placeholder="Enter Password" name="password" />
+                </div>
+
+                <div>
+                  <span id="error" style="color: red;"></span>
+                </div>
+
+                <button type="submit" class="btn btn-outline-light btn-lg px-5">Login</button>
+              </form>
+            </div>
+
+            <div>
+              <p class="mb-0">Don't have an account? <a href="/user/register" class="text-white-50 fw-bold">Sign Up</a></p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  document.getElementById('login').addEventListener('submit', async (event) => {
+    event.preventDefault();
+
+    const email = document.getElementById('email').value.trim();
+    const password = document.getElementById('password').value.trim();
+    const error = document.getElementById('error');
+
+    const passwordRegex = /^[^\W_][\w\W]{4,}$/;
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    let isValid = true;
+
+    if (!emailRegex.test(email)) {
+      error.innerHTML = 'Invalid Email';
+      isValid = false;
+    } else if (!passwordRegex.test(password)) {
+      error.innerHTML = 'Invalid Password';
+      isValid = false;
+    } else {
+      error.innerHTML = '';
+    }
+
+    if (isValid) {
+      const response = await fetch('/user/home', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          email: email,
+          password: password,
+        })
+      });
+
+      if (response.ok) {
+        window.location.href = '/user/home';
+      } else {
+        const data = await response.json();
+        error.innerHTML = data.message;
+      }
+    }
+  });
+</script>
+
+<%- include ('./parstial/footer')  -%>

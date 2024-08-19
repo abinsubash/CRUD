@@ -1,0 +1,171 @@
+<%- include('./parstial/header') -%>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+  <title>Create User Form</title>
+  <style>
+    #userForm {
+      display: none;
+    }
+  </style>
+</head>
+<body style="background-color: black;">
+  <div class="container">
+    <button id="createUserBtn" class="btn btn-primary my-3">Create User</button>
+    <form style="width: 50%;" id="userForm" method="post" action="/admin/createuser">
+      <div class="form-group">
+        <label for="exampleInputUsername">Username</label>
+        <input type="text" name="username" class="form-control" id="exampleInputUsername" placeholder="Enter username">
+        <small id="usernameError" style="color: red;"></small>
+      </div>
+      <div class="form-group">
+        <label for="exampleInputName">Name</label>
+        <input type="text" class="form-control" name="name" id="exampleInputName" placeholder="Enter name">
+        <small id="nameError" style="color: red;"></small>
+      </div>
+      <div class="form-group">
+        <label for="exampleInputEmail1">Email address</label>
+        <input type="email" class="form-control" name="email" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter email">
+        <small id="emailError" style="color: red;"></small>
+        <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small>
+      </div>
+      <div class="form-group">
+        <label for="exampleInputPassword1">Password</label>
+        <input type="password" name="password" class="form-control" id="exampleInputPassword1" placeholder="Password">
+        <small id="passwordError" style="color: red;"></small>
+      </div>
+      <button type="submit" class="btn btn-primary">Submit</button>
+    </form>
+  </div>
+  <form action="/admin/search" method="post" style="position: absolute; right: 20px; top: 20px;">
+    <label for="search" ></label>
+    <input type="text" name="search" id="search" placeholder="You can search">
+    <button type="submit">submit</button>
+  </form>
+  
+  <div class="text-center">
+    <div class="mt-5">
+      <a style="font-size: 30px;" href="/admin/home">UserList</a>
+      <table class="table table-striped table-dark">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Username</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- Assuming you have a users array -->
+          <% if (typeof users !== 'undefined' && users.length > 0) { %>
+            <% users.forEach(user => { %>
+              <tr>
+                <td><%= user.name %></td>
+                <td><%= user.email %></td>
+                <td><%= user.username %></td>
+                <td>
+                  <a href="/admin/updateUser?id=<%= user._id %>" class="btn btn-primary btn-sm">Edit</a>
+                  <a href="" onclick="deleteUser('<%= user._id %>')" class="btn btn-danger btn-sm">Delete</a>
+                </td>
+              </tr>
+            <% }); %>
+          <% } else { %>
+            <tr>
+              <td colspan="5" class="text-center">No users available.</td>
+            </tr>
+          <% } %>
+        </tbody>
+      </table>
+    </div>
+    <div class="mt-5 text-center">
+      <form action="/admin/logout" method="post">
+        <button type="submit" class="btn btn-danger btn-block">Logout</button>
+      </form>
+    </div>
+  </div>
+</body>
+
+<script>
+function deleteUser(userId) {
+    if (confirm('Are you sure you want to delete this user?')) {
+        fetch(`/admin/delete/${userId}`, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert('User deleted successfully');
+                window.location.reload();
+            } else {
+                alert('Error deleting user');
+                window.location.reload();
+            }
+        })
+        .catch(error => console.error('Error:', error));
+    }
+}
+
+document.getElementById('createUserBtn').addEventListener('click', function() {
+    var form = document.getElementById('userForm');
+    form.style.display = form.style.display === 'none' ? 'block' : 'none';
+});
+
+document.getElementById("userForm").addEventListener("submit", function(event) {
+    event.preventDefault();
+    
+    const email = document.getElementById("exampleInputEmail1").value.trim();
+    const password = document.getElementById('exampleInputPassword1').value.trim();
+    const username = document.getElementById("exampleInputUsername").value.trim();
+    const name = document.getElementById("exampleInputName").value.trim();
+
+    const emailError = document.getElementById('emailError');
+    const passwordError = document.getElementById('passwordError');
+    const usernameError = document.getElementById('usernameError');
+    const nameError = document.getElementById('nameError');
+
+    const passwordRegex = /^[^\W_][\w\W]{5,}$/;
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const usernameRegex = /^[A-Za-z][A-Za-z\s]*$/;
+    const nameRegex = /^[A-Za-z\s]+$/;
+
+    let isValid = true;
+
+    // Clear previous error messages
+    emailError.innerHTML = "";
+    passwordError.innerHTML = "";
+    usernameError.innerHTML = "";
+    nameError.innerHTML = "";
+
+    if (!emailRegex.test(email)) {
+      emailError.innerHTML = "Enter a valid email";
+      isValid = false;
+    }
+    if (!passwordRegex.test(password)) {
+      passwordError.innerHTML = "Password must be minimum 6 characters";
+      isValid = false;
+    }
+    if (!usernameRegex.test(username)) {
+      usernameError.innerHTML = "Enter a valid Username";
+      isValid = false;
+    }
+    if (!nameRegex.test(name)) {
+      nameError.innerHTML = "Enter a valid Name";
+      isValid = false;
+    }
+
+    if (isValid) {
+      this.submit();
+    }
+});
+</script>
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+<%- include('./parstial/footer') -%>
